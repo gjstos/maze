@@ -1,23 +1,11 @@
-# Specify the Dart SDK base image version using dart:<version> (ex: dart:2.12)
-FROM dart:stable AS build
+from dart
 
-# Resolve app dependencies.
-WORKDIR /app
-COPY pubspec.* ./
-RUN dart pub get
+RUN apt-get update
+RUN apt-get install -y curl apt-transport-http git unzip xz-utils zip libglu1-mesa
+RUN wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/dart.gpg
+RUN echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list
 
-# Copy app source code and AOT compile it.
-COPY . .
-# Ensure packages are still up-to-date if anything has changed
-RUN dart pub get --offline
-RUN dart compile exe bin/server.dart -o bin/server
+RUN apt-get update
+RUN apt-get install dart -y
 
-# Build minimal serving image from AOT-compiled `/server` and required system
-# libraries and configuration files stored in `/runtime/` from the build stage.
-FROM scratch
-COPY --from=build /runtime/ /
-COPY --from=build /app/bin/server /app/bin/
-
-# Start server.
-EXPOSE 8080
-CMD ["/app/bin/server"]
+ENV PATH="$PATH:/usr/lib/dart/bin"
