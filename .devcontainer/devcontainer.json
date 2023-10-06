@@ -1,0 +1,16 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [
+    3000
+  ],
+  "name": "Dart Codespaces",
+  "customization": {
+    "vscode": {
+      "extensions": [
+        "dart-code.dart-code"
+      ]
+    }
+  }
+}
