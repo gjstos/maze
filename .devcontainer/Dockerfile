@@ -1,4 +1,4 @@
-from dart
+FROM dart
 
 RUN apt-get update
 RUN apt-get install -y curl apt-transport-http git unzip xz-utils zip libglu1-mesa
